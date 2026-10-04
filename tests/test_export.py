@@ -1,13 +1,24 @@
 import sqlite3
 import zipfile
+from pathlib import Path
 
-from sakura_miner.export import build_deck, make_note, note_guid, write_deck
+from sakura_miner.export import (
+    build_deck,
+    highlight,
+    make_note,
+    note_guid,
+    write_deck,
+)
+from sakura_miner.lookup import lookup
 from sakura_miner.models import Entry, Word
+from sakura_miner.tokenizer import tokenize
+
+SAMPLE = Path(__file__).parent / "fixtures" / "sample.txt"
 
 
 def make_entry(lemma="食べる", reading="たべる", level=None):
     word = Word(
-        surface="食べ",
+        surface="食べた",
         lemma=lemma,
         reading=reading,
         pos="動詞",
@@ -38,7 +49,13 @@ def test_guid_depends_on_reading():
 
 def test_note_fields():
     note = make_note(make_entry())
-    assert note.fields == ["食べる", "たべる", "to eat", "ケーキを食べた。", ""]
+    assert note.fields == [
+        "食べる",
+        "たべる",
+        "to eat",
+        'ケーキを<span class="target">食べた</span>。',
+        "",
+    ]
     assert note.tags == []
 
 
@@ -71,3 +88,32 @@ def test_write_deck(tmp_path):
     assert len(notes) == 2
     assert {n[0] for n in notes} == {note_guid(e) for e in entries}
     assert any("N5" in n[2] for n in notes)
+
+
+def test_highlight_first_match_only():
+    out = highlight("猫と猫", "猫")
+    assert out == '<span class="target">猫</span>と猫'
+
+
+def test_highlight_escapes_html():
+    out = highlight("<b>猫</b>", "猫")
+    assert out == '&lt;b&gt;<span class="target">猫</span>&lt;/b&gt;'
+
+
+def test_highlight_missing_target():
+    assert highlight("犬が好き", "猫") == "犬が好き"
+    assert highlight("犬が好き", "") == "犬が好き"
+
+
+def test_empty_sentence_falls_back_to_word():
+    entry = make_entry()
+    entry.word = Word("猫", "猫", "ねこ", "名詞", "")
+    assert make_note(entry).fields[3] == '<span class="target">猫</span>'
+
+
+def test_every_card_has_highlighted_sentence():
+    text = SAMPLE.read_text(encoding="utf-8")
+    for word in tokenize(text):
+        sentence = make_note(lookup(word)).fields[3]
+        assert sentence
+        assert '<span class="target">' in sentence

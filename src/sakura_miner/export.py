@@ -29,6 +29,10 @@ CARD_CSS = """
   background-color: #fde2e4;
   font-size: 22px;
 }
+.sentence .target {
+  color: #d1477a;
+  font-weight: bold;
+}
 .level {
   margin-top: 16px;
   font-size: 14px;
@@ -66,13 +70,26 @@ def note_guid(entry: Entry) -> str:
     return genanki.guid_for(entry.word.lemma, entry.word.reading)
 
 
+def highlight(sentence: str, target: str) -> str:
+    """Escape sentence for HTML and wrap the first match of target in a span."""
+    start = sentence.find(target) if target else -1
+    if start == -1:
+        return html.escape(sentence)
+    end = start + len(target)
+    return (
+        html.escape(sentence[:start])
+        + f'<span class="target">{html.escape(target)}</span>'
+        + html.escape(sentence[end:])
+    )
+
+
 def make_note(entry: Entry) -> genanki.Note:
     word = entry.word
     fields = [
         html.escape(word.lemma),
         html.escape(word.reading),
         html.escape("; ".join(entry.meanings)),
-        html.escape(word.sentence),
+        highlight(word.sentence or word.surface, word.surface),
         entry.level or "",
     ]
     tags = [entry.level] if entry.level else []
