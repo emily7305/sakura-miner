@@ -10,6 +10,7 @@ from sakura_miner.models import Word
 # 形状詞 covers na-adjectives like 静か
 CONTENT_POS = {"名詞", "動詞", "形容詞", "形状詞", "副詞"}
 INFLECTING_POS = {"動詞", "形容詞", "形状詞"}
+JAPANESE = re.compile(r"[\u3040-\u30ff\u4e00-\u9fff々]")
 
 SENTENCE_END = re.compile(r"(?<=[。！？!?])|\n")
 KATAKANA_ONLY = re.compile(r"^[゠-ヿー]+$")
@@ -51,9 +52,10 @@ def _reading(token, lemma: str) -> str:
 def _is_content(token) -> bool:
     pos1 = getattr(token.feature, "pos1", None)
     pos2 = getattr(token.feature, "pos2", None)
-    if pos1 not in CONTENT_POS:
+    if pos1 not in CONTENT_POS or pos2 == "数詞":
         return False
-    return pos2 != "数詞"
+    # unidic tags english words as nouns
+    return bool(JAPANESE.search(token.surface))
 
 
 def _full_surface(tokens, i: int) -> str:

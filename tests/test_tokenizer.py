@@ -68,6 +68,13 @@ def test_no_japanese():
     assert tokenize("!!! ... ???") == []
 
 
+def test_latin_words_skipped():
+    words = tokenize("Hello, this is English. OPの曲が好き。")
+    assert "Hello" not in lemmas(words)
+    assert "OP" not in lemmas(words)
+    assert "曲" in lemmas(words)
+
+
 def test_split_sentences():
     text = "おはよう。元気？\nうん！"
     assert split_sentences(text) == ["おはよう。", "元気？", "うん！"]
