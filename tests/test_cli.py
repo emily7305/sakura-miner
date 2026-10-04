@@ -106,6 +106,12 @@ def test_reverse(tmp_path):
     assert "cards written: 4" in result.output
 
 
+def test_furigana(tmp_path):
+    result, out = run(tmp_path, str(SAMPLE), "--furigana", "--limit", "1")
+    assert result.exit_code == 0, result.output
+    assert "<ruby>" in read_fields(out, tmp_path)[0]
+
+
 def test_missing_file(tmp_path):
     result, _ = run(tmp_path, str(tmp_path / "nope.txt"))
     assert result.exit_code != 0

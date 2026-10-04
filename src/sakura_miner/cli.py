@@ -70,6 +70,11 @@ def print_stats(words: list[Word], known: set[str]) -> None:
     is_flag=True,
     help="Also make a meaning-to-word card for each word.",
 )
+@click.option(
+    "--furigana",
+    is_flag=True,
+    help="Show readings over the kanji in the card sentence.",
+)
 @click.option("--deck-name", default="Sakura Miner", show_default=True)
 @click.option("--limit", type=click.IntRange(min=1), help="Maximum number of cards.")
 def main(
@@ -80,6 +85,7 @@ def main(
     sort: str,
     stats: bool,
     reverse: bool,
+    furigana: bool,
     deck_name: str,
     limit: int | None,
 ) -> None:
@@ -116,7 +122,7 @@ def main(
     for entry in entries:
         entry.level = levels[entry.word]
 
-    write_deck(entries, output, deck_name, reverse)
+    write_deck(entries, output, deck_name, reverse, furigana)
     click.echo(f"words found: {found}")
     click.echo(f"skipped as known: {skipped}")
     if level is not None:

@@ -29,13 +29,13 @@ All core features are complete.
 - [x] JLPT tagging: add level tags and a `--level` filter
 - [x] Sentence context: show the source sentence with the target word highlighted
 
-Additional features:
+All additional features are also complete:
 
 - [x] Subtitle input: read `.srt` and `.ass` files directly
 - [x] Frequency ordering: list the most frequent words first
 - [x] Statistics: show the JLPT level breakdown of a text with `--stats`
 - [x] Reverse cards: optional meaning-to-word cards
-- [ ] Furigana: optional readings above kanji in the source sentence
+- [x] Furigana: optional readings above kanji in the source sentence
 
 ## Installation
 
@@ -56,7 +56,7 @@ The `jamdict-data` package contains the complete dictionary database, so the ini
 ## Usage
 
 ```
-sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--sort ORDER] [--stats] [--reverse] [--deck-name NAME] [--limit N]
+sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--sort ORDER] [--stats] [--reverse] [--furigana] [--deck-name NAME] [--limit N]
 ```
 
 | Option | Description | Default |
@@ -68,6 +68,7 @@ sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--sort ORDER
 | `--sort` | Card order: `text` (order of first appearance) or `frequency` (most frequent first) | `text` |
 | `--stats` | Show the JLPT level breakdown of the text instead of writing a deck | off |
 | `--reverse` | Also create a meaning-to-word card for each word | off |
+| `--furigana` | Show readings above the kanji in the source sentence | off |
 | `--deck-name` | Name of the deck in Anki | `Sakura Miner` |
 | `--limit` | Maximum number of cards | no limit |
 
@@ -168,6 +169,8 @@ With `--reverse`, each note also produces a second card that shows the English m
 
 In the source sentence, the word is highlighted exactly as it appeared, including its conjugation: a card for 食べる taken from ケーキを食べた。 highlights 食べた, and a card for 面白い taken from とても面白かった！ highlights 面白かった.
 
+With `--furigana`, readings are shown above every kanji in the source sentence using HTML `<ruby>` tags, with okurigana left uncovered (for example, 食[た]べた). Furigana is never added to the word on the front of the card, as that would reveal the answer.
+
 The deck and note type use fixed IDs, and each note's ID is derived from the word and its reading. Importing a new deck built from the same or overlapping text therefore updates existing cards rather than creating duplicates.
 
 ### Library Use
@@ -204,6 +207,7 @@ Each word appears only once per deck and is paired with the first sentence in wh
 
 - UniDic segments some compound words into shorter units. For example, 喫茶店 is returned as 喫茶, and 店 is discarded.
 - Readings follow the UniDic dictionary form, so 明日 is read as あす rather than あした.
+- Furigana uses the reading UniDic considers most likely in context, which is occasionally not the most common one (for example, 日本 as にっぽん rather than にほん).
 
 ## Development
 

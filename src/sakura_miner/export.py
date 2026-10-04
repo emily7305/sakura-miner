@@ -3,6 +3,7 @@ from pathlib import Path
 
 import genanki
 
+from sakura_miner.furigana import to_ruby
 from sakura_miner.models import Entry
 
 # fixed ids so re-importing updates existing cards instead of adding copies
@@ -25,6 +26,7 @@ CARD_CSS = """
   display: inline-block;
   margin-top: 8px;
   padding: 10px 16px;
+  line-height: 2;
   border-radius: 12px;
   background-color: #fde2e4;
   font-size: 22px;
@@ -32,6 +34,10 @@ CARD_CSS = """
 .sentence .target {
   color: #d1477a;
   font-weight: bold;
+}
+.sentence rt {
+  font-size: 0.55em;
+  color: #b5838d;
 }
 .level {
   margin-top: 16px;
@@ -85,26 +91,32 @@ def note_guid(entry: Entry) -> str:
     return genanki.guid_for(entry.word.lemma, entry.word.reading)
 
 
-def highlight(sentence: str, target: str) -> str:
-    """Escape sentence for HTML and wrap the first match of target in a span."""
+def highlight(sentence: str, target: str, furigana: bool = False) -> str:
+    """Escape sentence for HTML and wrap the first match of target in a span.
+
+    With furigana, readings are added over the kanji as <ruby> tags.
+    """
+    render = to_ruby if furigana else html.escape
     start = sentence.find(target) if target else -1
     if start == -1:
-        return html.escape(sentence)
+        return render(sentence)
     end = start + len(target)
     return (
-        html.escape(sentence[:start])
-        + f'<span class="target">{html.escape(target)}</span>'
-        + html.escape(sentence[end:])
+        render(sentence[:start])
+        + f'<span class="target">{render(target)}</span>'
+        + render(sentence[end:])
     )
 
 
-def make_note(entry: Entry, reverse: bool = False) -> genanki.Note:
+def make_note(
+    entry: Entry, reverse: bool = False, furigana: bool = False
+) -> genanki.Note:
     word = entry.word
     fields = [
         html.escape(word.lemma),
         html.escape(word.reading),
         html.escape("; ".join(entry.meanings)),
-        highlight(word.sentence or word.surface, word.surface),
+        highlight(word.sentence or word.surface, word.surface, furigana),
         entry.level or "",
         "y" if reverse else "",
     ]
@@ -113,11 +125,14 @@ def make_note(entry: Entry, reverse: bool = False) -> genanki.Note:
 
 
 def build_deck(
-    entries: list[Entry], deck_name: str = "Sakura Miner", reverse: bool = False
+    entries: list[Entry],
+    deck_name: str = "Sakura Miner",
+    reverse: bool = False,
+    furigana: bool = False,
 ) -> genanki.Deck:
     deck = genanki.Deck(DECK_ID, deck_name)
     for entry in entries:
-        deck.add_note(make_note(entry, reverse))
+        deck.add_note(make_note(entry, reverse, furigana))
     return deck
 
 
@@ -126,10 +141,12 @@ def write_deck(
     path: Path,
     deck_name: str = "Sakura Miner",
     reverse: bool = False,
+    furigana: bool = False,
 ) -> None:
     """Write entries to an Anki .apkg file at path.
 
-    With reverse, each note also gets a meaning-to-word card.
+    With reverse, each note also gets a meaning-to-word card. With furigana,
+    the sentence gets readings over its kanji.
     """
-    deck = build_deck(entries, deck_name, reverse)
+    deck = build_deck(entries, deck_name, reverse, furigana)
     genanki.Package(deck).write_to_file(str(path))

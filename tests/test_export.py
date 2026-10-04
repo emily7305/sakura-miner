@@ -144,3 +144,10 @@ def test_write_deck_reverse(tmp_path):
     out = tmp_path / "deck.apkg"
     write_deck([make_entry(), make_entry("猫", "ねこ")], out, reverse=True)
     assert count_cards(out, tmp_path) == 4
+
+
+def test_furigana_in_sentence():
+    note = make_note(make_entry(), furigana=True)
+    assert note.fields[3] == (
+        'ケーキを<span class="target"><ruby>食<rt>た</rt></ruby>べた</span>。'
+    )
