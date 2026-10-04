@@ -20,10 +20,7 @@ You only need to do this once. No coding experience is needed: you will copy and
 
 ### Step 1: Install Python
 
-1. Go to [python.org/downloads](https://www.python.org/downloads/) and click the yellow **Download Python** button.
-2. Open the downloaded file and follow the installer.
-   - **Windows:** on the first screen, tick the box **Add python.exe to PATH** before clicking **Install Now**. This is important.
-   - **Mac:** click through the installer with the default settings.
+Install Python 3.10 or later. On Windows, make sure to tick **Add python.exe to PATH** during installation.
 
 ### Step 2: Download Sakura Miner
 
