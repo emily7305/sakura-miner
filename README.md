@@ -77,27 +77,37 @@ Importing a newer deck later updates the existing cards instead of creating dupl
 
 ### Adding options
 
-Options are added after the file name to change what goes into the deck. For example, this keeps only words up to N3, puts the most frequent words first, adds furigana and names the file `episode01.apkg`:
+Options let you change what goes into the deck. They are typed on the same line as the command from step 3, after the file name, with a space between each one.
+
+For example, to keep only words up to JLPT N3, type this instead of the plain command and press **Enter**:
 
 ```bash
-sakura-miner episode01.srt -o episode01.apkg --level N3 --sort frequency --furigana
+sakura-miner episode01.srt --level N3
+```
+
+You can combine as many options as you like, in any order. This command also adds furigana and puts the most common words first:
+
+```bash
+sakura-miner episode01.srt --level N3 --furigana --sort frequency
 ```
 
 ### All options
 
-| Option | Description |
+Copy the text from the first column into your command. Where it shows an example value, such as `N3` or `30`, replace it with your own.
+
+| Type this | What it does |
 | --- | --- |
-| `-o FILE` | Where to save the deck (default: `deck.apkg`) |
-| `--level N3` | Only include words at this JLPT level or easier |
+| `--level N3` | Only include words at this JLPT level or easier (`N5`, `N4`, `N3`, `N2` or `N1`) |
+| `--furigana` | Show readings above the kanji in the example sentence |
 | `--sort frequency` | Put the words used most often in the text first |
 | `--limit 30` | Include at most this many words |
-| `--furigana` | Show readings above the kanji in the example sentence |
 | `--reverse` | Also add cards that show the English meaning and ask for the Japanese word |
-| `--known FILE` | Use a different known-words file (see below) |
-| `--deck-name NAME` | Name of the deck in Anki (default: `Sakura Miner`) |
+| `-o episode01.apkg` | Save the deck under this file name instead of `deck.apkg` |
+| `--deck-name "Episode 1"` | Name of the deck inside Anki (use quotes if the name has spaces) |
+| `--known my_words.txt` | Use a different known-words file (see below) |
 | `--stats` | Show how difficult the text is instead of making a deck (see below) |
 
-Run `sakura-miner --help` to see all options.
+To see this list in the terminal, type `sakura-miner --help`.
 
 ### Skipping words you already know
 
