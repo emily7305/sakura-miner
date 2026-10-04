@@ -221,3 +221,12 @@ __marimo__/
 
 # personal word list
 data/known_words.txt
+
+# decks built while testing
+*.apkg
+
+# editors and os junk
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
