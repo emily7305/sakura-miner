@@ -112,6 +112,36 @@ def test_furigana(tmp_path):
     assert "<ruby>" in read_fields(out, tmp_path)[0]
 
 
+def test_no_japanese_words(tmp_path):
+    text = tmp_path / "in.txt"
+    text.write_text("hello world", encoding="utf-8")
+    result, out = run(tmp_path, str(text))
+    assert result.exit_code != 0
+    assert "no Japanese words found" in result.output
+    assert not out.exists()
+
+
+def test_everything_known(tmp_path):
+    text = tmp_path / "in.txt"
+    text.write_text("猫が好き。", encoding="utf-8")
+    known = tmp_path / "known.txt"
+    known.write_text("猫\n好き\n", encoding="utf-8")
+    result, out = run(tmp_path, str(text), known=known)
+    assert result.exit_code == 0, result.output
+    assert "no deck written" in result.output
+    assert not out.exists()
+
+
+def test_output_folder_missing(tmp_path):
+    result = CliRunner().invoke(
+        main,
+        [str(SAMPLE), "-o", str(tmp_path / "nope" / "x.apkg"), "--known", "none"],
+    )
+    assert result.exit_code != 0
+    assert "could not write deck" in result.output
+    assert "Traceback" not in result.output
+
+
 def test_missing_file(tmp_path):
     result, _ = run(tmp_path, str(tmp_path / "nope.txt"))
     assert result.exit_code != 0

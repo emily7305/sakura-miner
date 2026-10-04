@@ -102,6 +102,8 @@ def main(
 
     words = tokenize(text)
     found = len(words)
+    if not words:
+        raise click.ClickException(f"no Japanese words found in {input_path}")
     known = load_known(known_path)
     if stats:
         print_stats(words, known)
@@ -123,10 +125,17 @@ def main(
     for entry in entries:
         entry.level = levels[entry.word]
 
-    write_deck(entries, output, deck_name, reverse, furigana)
     click.echo(f"words found: {found}")
     click.echo(f"skipped as known: {skipped}")
     if level is not None:
         click.echo(f"skipped above {level}: {too_hard}")
+    if not entries:
+        click.echo("nothing new to add, no deck written")
+        return
+
+    try:
+        write_deck(entries, output, deck_name, reverse, furigana)
+    except OSError as e:
+        raise click.ClickException(f"could not write deck: {output} ({e})") from None
     cards = len(entries) * (2 if reverse else 1)
     click.echo(f"cards written: {cards} -> {output}")
