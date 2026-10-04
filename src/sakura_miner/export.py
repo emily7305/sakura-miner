@@ -51,6 +51,17 @@ BACK = """{{FrontSide}}
 {{#Level}}<div class="level">{{Level}}</div>{{/Level}}
 """
 
+# only generated when the Reverse field is filled in
+REVERSE_FRONT = '{{#Reverse}}<div class="meaning">{{Meaning}}</div>{{/Reverse}}'
+
+REVERSE_BACK = """{{FrontSide}}
+<hr id="answer">
+<div class="word">{{Word}}</div>
+<div class="reading">{{Reading}}</div>
+<div class="sentence">{{Sentence}}</div>
+{{#Level}}<div class="level">{{Level}}</div>{{/Level}}
+"""
+
 MODEL = genanki.Model(
     MODEL_ID,
     "Sakura Miner",
@@ -60,8 +71,12 @@ MODEL = genanki.Model(
         {"name": "Meaning"},
         {"name": "Sentence"},
         {"name": "Level"},
+        {"name": "Reverse"},
     ],
-    templates=[{"name": "Recognition", "qfmt": FRONT, "afmt": BACK}],
+    templates=[
+        {"name": "Recognition", "qfmt": FRONT, "afmt": BACK},
+        {"name": "Production", "qfmt": REVERSE_FRONT, "afmt": REVERSE_BACK},
+    ],
     css=CARD_CSS,
 )
 
@@ -83,7 +98,7 @@ def highlight(sentence: str, target: str) -> str:
     )
 
 
-def make_note(entry: Entry) -> genanki.Note:
+def make_note(entry: Entry, reverse: bool = False) -> genanki.Note:
     word = entry.word
     fields = [
         html.escape(word.lemma),
@@ -91,20 +106,30 @@ def make_note(entry: Entry) -> genanki.Note:
         html.escape("; ".join(entry.meanings)),
         highlight(word.sentence or word.surface, word.surface),
         entry.level or "",
+        "y" if reverse else "",
     ]
     tags = [entry.level] if entry.level else []
     return genanki.Note(model=MODEL, fields=fields, tags=tags, guid=note_guid(entry))
 
 
-def build_deck(entries: list[Entry], deck_name: str = "Sakura Miner") -> genanki.Deck:
+def build_deck(
+    entries: list[Entry], deck_name: str = "Sakura Miner", reverse: bool = False
+) -> genanki.Deck:
     deck = genanki.Deck(DECK_ID, deck_name)
     for entry in entries:
-        deck.add_note(make_note(entry))
+        deck.add_note(make_note(entry, reverse))
     return deck
 
 
 def write_deck(
-    entries: list[Entry], path: Path, deck_name: str = "Sakura Miner"
+    entries: list[Entry],
+    path: Path,
+    deck_name: str = "Sakura Miner",
+    reverse: bool = False,
 ) -> None:
-    """Write entries to an Anki .apkg file at path."""
-    genanki.Package(build_deck(entries, deck_name)).write_to_file(str(path))
+    """Write entries to an Anki .apkg file at path.
+
+    With reverse, each note also gets a meaning-to-word card.
+    """
+    deck = build_deck(entries, deck_name, reverse)
+    genanki.Package(deck).write_to_file(str(path))

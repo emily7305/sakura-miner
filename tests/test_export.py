@@ -27,6 +27,16 @@ def make_entry(lemma="食べる", reading="たべる", level=None):
     return Entry(word=word, meanings=["to eat"], level=level)
 
 
+def count_cards(path, tmp_path):
+    with zipfile.ZipFile(path) as z:
+        z.extract("collection.anki2", tmp_path)
+    con = sqlite3.connect(tmp_path / "collection.anki2")
+    try:
+        return con.execute("select count(*) from cards").fetchone()[0]
+    finally:
+        con.close()
+
+
 def read_notes(path, tmp_path):
     with zipfile.ZipFile(path) as z:
         z.extract("collection.anki2", tmp_path)
@@ -54,6 +64,7 @@ def test_note_fields():
         "たべる",
         "to eat",
         'ケーキを<span class="target">食べた</span>。',
+        "",
         "",
     ]
     assert note.tags == []
@@ -117,3 +128,19 @@ def test_every_card_has_highlighted_sentence():
         sentence = make_note(lookup(word)).fields[3]
         assert sentence
         assert '<span class="target">' in sentence
+
+
+def test_one_card_per_note_by_default():
+    assert len(make_note(make_entry()).cards) == 1
+
+
+def test_reverse_adds_second_card():
+    note = make_note(make_entry(), reverse=True)
+    assert len(note.cards) == 2
+    assert note.fields[5] == "y"
+
+
+def test_write_deck_reverse(tmp_path):
+    out = tmp_path / "deck.apkg"
+    write_deck([make_entry(), make_entry("猫", "ねこ")], out, reverse=True)
+    assert count_cards(out, tmp_path) == 4
