@@ -6,6 +6,7 @@ from sakura_miner.export import write_deck
 from sakura_miner.filter import load_known, remove_known
 from sakura_miner.jlpt import LEVELS, at_or_below, get_level
 from sakura_miner.lookup import lookup
+from sakura_miner.subtitles import read_input
 from sakura_miner.tokenizer import tokenize
 
 DEFAULT_KNOWN = Path("data/known_words.txt")
@@ -44,9 +45,9 @@ def main(
     deck_name: str,
     limit: int | None,
 ) -> None:
-    """Turn a Japanese text file into an Anki deck."""
+    """Turn a Japanese text or subtitle file into an Anki deck."""
     try:
-        text = input_path.read_text(encoding="utf-8")
+        text = read_input(input_path)
     except FileNotFoundError:
         raise click.ClickException(f"file not found: {input_path}") from None
     except UnicodeDecodeError:

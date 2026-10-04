@@ -8,7 +8,7 @@ Mining by hand is slow, however, because every word has to be looked up and copi
 
 Sakura Miner converts Japanese text, such as anime subtitles, song lyrics and articles, into Anki flashcards in the following stages:
 
-1. Read a UTF-8 encoded text file.
+1. Read a UTF-8 encoded text or subtitle file.
 2. Split the text into sentences and tokenize each sentence with fugashi.
 3. Reduce each word to its dictionary form (for example, 食べた becomes 食べる).
 4. Remove words listed in the user's known-words file.
@@ -29,7 +29,13 @@ All core features are complete.
 - [x] JLPT tagging: add level tags and a `--level` filter
 - [x] Sentence context: show the source sentence with the target word highlighted
 
-Possible future additions include reverse cards, furigana, frequency-based ordering, subtitle input (`.srt`, `.ass`) and a `--stats` command.
+Additional features:
+
+- [x] Subtitle input: read `.srt` and `.ass` files directly
+- [ ] Frequency ordering: list the most frequent words first
+- [ ] Statistics: show the JLPT level breakdown of a text with `--stats`
+- [ ] Reverse cards: optional meaning-to-word cards
+- [ ] Furigana: optional readings above kanji in the source sentence
 
 ## Installation
 
@@ -55,7 +61,7 @@ sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--deck-name 
 
 | Option | Description | Default |
 | --- | --- | --- |
-| `INPUT` | Path to a UTF-8 text file | required |
+| `INPUT` | Path to a UTF-8 text file or `.srt` / `.ass` subtitle file | required |
 | `-o`, `--output` | Path of the deck to write | `deck.apkg` |
 | `--known` | File of words to skip (see [Known Words](#known-words)) | `data/known_words.txt` |
 | `--level` | Keep only words at or below this JLPT level (`N5` to `N1`), plus words not on any list | no filter |
@@ -76,6 +82,14 @@ cards written: 7 -> episode01.apkg
 ```
 
 The resulting file can be imported into Anki with **File > Import**.
+
+### Subtitle Files
+
+Files ending in `.srt`, `.ass` or `.ssa` are read as subtitles. Cue numbers, timestamps, styling tags (such as `<i>` and `{\an8}`) and non-dialogue lines are removed, and each subtitle line is treated as a separate sentence. All other files are read as plain text.
+
+```bash
+sakura-miner episode01.ja.srt -o episode01.apkg
+```
 
 ### Known Words
 

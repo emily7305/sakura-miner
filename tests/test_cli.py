@@ -51,6 +51,13 @@ def test_bad_level(tmp_path):
     assert result.exit_code != 0
 
 
+def test_subtitle_input(tmp_path):
+    srt = Path(__file__).parent / "fixtures" / "sample.srt"
+    result, _ = run(tmp_path, str(srt))
+    assert result.exit_code == 0, result.output
+    assert "words found: 8" in result.output
+
+
 def test_missing_file(tmp_path):
     result, _ = run(tmp_path, str(tmp_path / "nope.txt"))
     assert result.exit_code != 0
