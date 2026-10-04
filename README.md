@@ -81,12 +81,27 @@ The last line downloads a full Japanese dictionary, so it can take a few minutes
 
 ## Usage
 
+### Turning Sakura Miner on and off
+
+Sakura Miner only works in a terminal where it has been turned on. You need to do this every time you open a new terminal window.
+
+**To turn it on:**
+
+1. Open a terminal in the `sakura-miner-main` folder (see [Step 3](#step-3-open-a-terminal-in-the-folder) above).
+2. Type this line and press **Enter**:
+   - **Windows:** `.venv\Scripts\activate`
+   - **Mac:** `source .venv/bin/activate`
+
+When it is on, `(.venv)` appears at the start of the line in the terminal. If you see an error such as `'sakura-miner' is not recognized` or `command not found`, Sakura Miner is not turned on yet.
+
+**To turn it off**, type `deactivate` and press **Enter**, or simply close the terminal window. Nothing needs to be saved first.
+
+**To stop it while it is running**, for example if you started it on the wrong file, press **Ctrl + C** (also **Control + C** on Mac, not Command).
+
 ### Making a deck
 
 1. Put the file you want to study inside the `sakura-miner-main` folder. This can be a text file (`.txt`) or a subtitle file (`.srt` or `.ass`). To make a text file, paste the Japanese text into Notepad (Windows) or TextEdit (Mac) and save it as a `.txt` file (see [Saving text files](#saving-text-files) below).
-2. Open a terminal in the folder (see Step 3 above) and turn Sakura Miner on with:
-   - **Windows:** `.venv\Scripts\activate`
-   - **Mac:** `source .venv/bin/activate`
+2. Turn Sakura Miner on (see [above](#turning-sakura-miner-on-and-off)).
 3. Run Sakura Miner with the name of your file. For example, if your file is called `episode01.srt`:
 
    ```bash
@@ -94,8 +109,6 @@ The last line downloads a full Japanese dictionary, so it can take a few minutes
    ```
 
 4. A new file called `deck.apkg` appears in the folder. Double-click it, or open Anki and choose **File > Import**, and your new cards are ready.
-
-Step 2 needs to be repeated each time you open a new terminal window. If you see an error such as `'sakura-miner' is not recognized` or `command not found`, it usually means this step was skipped.
 
 Importing a newer deck later updates the existing cards instead of creating duplicates.
 
