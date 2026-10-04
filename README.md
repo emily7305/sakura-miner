@@ -32,7 +32,7 @@ All core features are complete.
 Additional features:
 
 - [x] Subtitle input: read `.srt` and `.ass` files directly
-- [ ] Frequency ordering: list the most frequent words first
+- [x] Frequency ordering: list the most frequent words first
 - [ ] Statistics: show the JLPT level breakdown of a text with `--stats`
 - [ ] Reverse cards: optional meaning-to-word cards
 - [ ] Furigana: optional readings above kanji in the source sentence
@@ -56,7 +56,7 @@ The `jamdict-data` package contains the complete dictionary database, so the ini
 ## Usage
 
 ```
-sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--deck-name NAME] [--limit N]
+sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--sort ORDER] [--deck-name NAME] [--limit N]
 ```
 
 | Option | Description | Default |
@@ -65,6 +65,7 @@ sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--deck-name 
 | `-o`, `--output` | Path of the deck to write | `deck.apkg` |
 | `--known` | File of words to skip (see [Known Words](#known-words)) | `data/known_words.txt` |
 | `--level` | Keep only words at or below this JLPT level (`N5` to `N1`), plus words not on any list | no filter |
+| `--sort` | Card order: `text` (order of first appearance) or `frequency` (most frequent first) | `text` |
 | `--deck-name` | Name of the deck in Anki | `Sakura Miner` |
 | `--limit` | Maximum number of cards | no limit |
 
@@ -90,6 +91,16 @@ Files ending in `.srt`, `.ass` or `.ssa` are read as subtitles. Cue numbers, tim
 ```bash
 sakura-miner episode01.ja.srt -o episode01.apkg
 ```
+
+### Card Order
+
+By default, cards are created in the order in which their words first appear in the text. With `--sort frequency`, the words that occur most often in the text come first, and words with equal counts keep their original order. Combined with `--limit`, this produces a deck of the words that matter most for understanding a particular episode or article:
+
+```bash
+sakura-miner episode01.ja.srt --sort frequency --limit 30
+```
+
+Frequency is counted within the input text only, after each word has been reduced to its dictionary form, so 食べた and 食べます both count towards 食べる.
 
 ### Known Words
 

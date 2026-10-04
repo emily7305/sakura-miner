@@ -1,3 +1,5 @@
+import sqlite3
+import zipfile
 from pathlib import Path
 
 from click.testing import CliRunner
@@ -13,6 +15,16 @@ def run(tmp_path, *args, known=None):
     out = tmp_path / "out.apkg"
     argv = [*args, "-o", str(out), "--known", str(known)]
     return CliRunner().invoke(main, argv), out
+
+
+def read_fields(apkg, tmp_path):
+    with zipfile.ZipFile(apkg) as z:
+        z.extract("collection.anki2", tmp_path)
+    con = sqlite3.connect(tmp_path / "collection.anki2")
+    try:
+        return [row[0] for row in con.execute("select flds from notes")]
+    finally:
+        con.close()
 
 
 def test_writes_deck(tmp_path):
@@ -56,6 +68,15 @@ def test_subtitle_input(tmp_path):
     result, _ = run(tmp_path, str(srt))
     assert result.exit_code == 0, result.output
     assert "words found: 8" in result.output
+
+
+def test_sort_by_frequency(tmp_path):
+    text = tmp_path / "in.txt"
+    text.write_text("犬を見た。猫がいる。猫が好き。", encoding="utf-8")
+    result, out = run(tmp_path, str(text), "--sort", "frequency", "--limit", "1")
+    assert result.exit_code == 0, result.output
+    notes = read_fields(out, tmp_path)
+    assert notes[0].startswith("猫")
 
 
 def test_missing_file(tmp_path):

@@ -7,7 +7,7 @@ from sakura_miner.filter import load_known, remove_known
 from sakura_miner.jlpt import LEVELS, at_or_below, get_level
 from sakura_miner.lookup import lookup
 from sakura_miner.subtitles import read_input
-from sakura_miner.tokenizer import tokenize
+from sakura_miner.tokenizer import by_frequency, count_words, tokenize
 
 DEFAULT_KNOWN = Path("data/known_words.txt")
 
@@ -35,6 +35,13 @@ DEFAULT_KNOWN = Path("data/known_words.txt")
     type=click.Choice(LEVELS, case_sensitive=False),
     help="Only keep words at or below this JLPT level, plus unlisted words.",
 )
+@click.option(
+    "--sort",
+    type=click.Choice(["text", "frequency"]),
+    default="text",
+    show_default=True,
+    help="Card order: as they appear in the text, or most frequent first.",
+)
 @click.option("--deck-name", default="Sakura Miner", show_default=True)
 @click.option("--limit", type=click.IntRange(min=1), help="Maximum number of cards.")
 def main(
@@ -42,6 +49,7 @@ def main(
     output: Path,
     known_path: Path,
     level: str | None,
+    sort: str,
     deck_name: str,
     limit: int | None,
 ) -> None:
@@ -66,6 +74,8 @@ def main(
         words = [w for w in words if at_or_below(levels[w], level)]
         too_hard = before - len(words)
 
+    if sort == "frequency":
+        words = by_frequency(words, count_words(text))
     if limit is not None:
         words = words[:limit]
     entries = [lookup(w) for w in words]
