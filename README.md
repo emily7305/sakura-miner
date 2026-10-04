@@ -13,20 +13,20 @@ Sakura Miner converts Japanese text, such as anime subtitles, song lyrics and ar
 3. Reduce each word to its dictionary form (for example, 食べた becomes 食べる).
 4. Remove words listed in the user's known-words file.
 5. Retrieve meanings and readings from JMdict, offline.
-6. Assign a JLPT level to each word, if level lists are provided.
+6. Assign a JLPT level to each word using the bundled vocabulary lists.
 7. Export an Anki deck (`.apkg`) that includes the source sentence on every card.
 
 The tool is designed primarily for learners at JLPT N3 and below, but it can be used with any Japanese text.
 
 ## Project Status
 
-The project is under active development. Tokenization, dictionary lookup, deck export and known-word filtering are complete; the remaining stages are planned.
+The project is under active development. Tokenization, dictionary lookup, deck export, known-word filtering and JLPT tagging are complete; sentence highlighting is planned.
 
 - [x] Tokenization: produce a deduplicated list of words in dictionary form
 - [x] Dictionary lookup: retrieve meanings and readings from JMdict
 - [x] Export: write an Anki `.apkg` deck
 - [x] Known words: exclude words the user already knows
-- [ ] JLPT tagging: add level tags and a `--level` filter
+- [x] JLPT tagging: add level tags and a `--level` filter
 - [ ] Sentence context: show the source sentence with the target word highlighted
 
 Possible future additions include reverse cards, furigana, frequency-based ordering, subtitle input (`.srt`, `.ass`) and a `--stats` command.
@@ -50,7 +50,7 @@ The `jamdict-data` package contains the complete dictionary database, so the ini
 ## Usage
 
 ```
-sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--deck-name NAME] [--limit N]
+sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--deck-name NAME] [--limit N]
 ```
 
 | Option | Description | Default |
@@ -58,22 +58,24 @@ sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--deck-name NAME] [--limit N
 | `INPUT` | Path to a UTF-8 text file | required |
 | `-o`, `--output` | Path of the deck to write | `deck.apkg` |
 | `--known` | File of words to skip (see [Known Words](#known-words)) | `data/known_words.txt` |
+| `--level` | Keep only words at or below this JLPT level (`N5` to `N1`), plus words not on any list | no filter |
 | `--deck-name` | Name of the deck in Anki | `Sakura Miner` |
 | `--limit` | Maximum number of cards | no limit |
 
 Example:
 
 ```bash
-sakura-miner episode01.txt -o episode01.apkg --deck-name "Episode 1"
+sakura-miner episode01.txt -o episode01.apkg --level N3 --deck-name "Episode 1"
 ```
 
 ```
 words found: 10
 skipped as known: 2
-cards written: 8 -> episode01.apkg
+skipped above N3: 1
+cards written: 7 -> episode01.apkg
 ```
 
-The resulting file can be imported into Anki with **File > Import**. JLPT filtering (`--level`) will be added in a later milestone.
+The resulting file can be imported into Anki with **File > Import**.
 
 ### Known Words
 
@@ -91,6 +93,24 @@ A template is provided in [`data/known_words.example.txt`](data/known_words.exam
 ```bash
 cp data/known_words.example.txt data/known_words.txt
 ```
+
+### JLPT Levels
+
+Each word is tagged with a JLPT level from the vocabulary lists in `data/jlpt/`. The level is shown on the card and added as an Anki tag (`N5`, `N4` and so on), so cards can be searched or filtered by level in Anki's browser.
+
+The JLPT has not published official vocabulary lists since 2010, so the bundled lists are the widely used unofficial lists compiled by Jonathan Waller (see [Acknowledgements](#acknowledgements)). They are a guide rather than a definitive standard, and some common words, particularly loanwords such as アニメ, do not appear on any list. Such words receive no level and are never removed by `--level`.
+
+When a word appears on more than one list, the easiest level is used. This matters because the lists often record an easy word in kana at one level (おもしろい at N5) and its kanji spelling at a harder level (面白い at N1).
+
+Additional or replacement lists can be placed in `data/jlpt/`. Every `.csv` file in that directory is loaded, and each must have the following columns:
+
+```csv
+word,reading,level
+食べる,たべる,N5
+賛成,さんせい,N3
+```
+
+`word` is the dictionary form, `reading` is in hiragana (or katakana for katakana words), and `level` is one of `N5` to `N1`.
 
 ### Cards
 
@@ -146,6 +166,7 @@ The test suite uses small fixtures in `tests/fixtures/` and does not require net
 
 ## Acknowledgements
 
+- JLPT vocabulary lists are by Jonathan Waller, originally published at tanos.co.uk, and are used under the [Creative Commons Attribution (CC BY)](https://creativecommons.org/licenses/by/4.0/) licence. They were obtained from the parsed copies in [Bluskyo/JLPT_Vocabulary](https://github.com/Bluskyo/JLPT_Vocabulary). For this project, the lists were converted to the `word,reading,level` format, entries listing several spellings or readings were split into separate rows, one corrupted reading (賛成) was corrected, and a small number of malformed rows were removed.
 - Dictionary data is taken from [JMdict and KANJIDIC2](https://www.edrdg.org/), compiled by the Electronic Dictionary Research and Development Group, and is used under the [CC BY-SA 4.0](https://www.edrdg.org/edrdg/licence.html) licence via [jamdict](https://github.com/neocl/jamdict).
 - Tokenization is provided by [fugashi](https://github.com/polm/fugashi) with [unidic-lite](https://github.com/polm/unidic-lite).
 - Kana conversion is provided by [jaconv](https://github.com/ikegami-yukino/jaconv).
@@ -154,4 +175,4 @@ The test suite uses small fixtures in `tests/fixtures/` and does not require net
 
 ## Licence
 
-This project is released under the MIT Licence; see [LICENSE](LICENSE). The dictionary data remains subject to its own licence, as noted above.
+This project is released under the MIT Licence; see [LICENSE](LICENSE). The dictionary data and JLPT vocabulary lists remain subject to their own licences, as noted above.
