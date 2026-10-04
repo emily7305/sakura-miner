@@ -7,6 +7,7 @@ from sakura_miner.models import Word
 
 # 形状詞 covers na-adjectives like 静か
 CONTENT_POS = {"名詞", "動詞", "形容詞", "形状詞", "副詞"}
+INFLECTING_POS = {"動詞", "形容詞", "形状詞"}
 
 SENTENCE_END = re.compile(r"(?<=[。！？!?])|\n")
 KATAKANA_ONLY = re.compile(r"^[゠-ヿー]+$")
@@ -53,6 +54,20 @@ def _is_content(token) -> bool:
     return pos2 != "数詞"
 
 
+def _full_surface(tokens, i: int) -> str:
+    # pull in the endings so 食べ + た shows up as 食べた on the card
+    surface = tokens[i].surface
+    if tokens[i].feature.pos1 not in INFLECTING_POS:
+        return surface
+    for token in tokens[i + 1 :]:
+        pos1 = token.feature.pos1
+        if pos1 == "助動詞" or (pos1 == "助詞" and token.surface in ("て", "で")):
+            surface += token.surface
+        else:
+            break
+    return surface
+
+
 def tokenize(text: str) -> list[Word]:
     """Return content words from text, deduplicated on (lemma, reading).
 
@@ -62,7 +77,8 @@ def tokenize(text: str) -> list[Word]:
     seen: set[tuple[str, str]] = set()
     words: list[Word] = []
     for sentence in split_sentences(text):
-        for token in tagger(sentence):
+        tokens = list(tagger(sentence))
+        for i, token in enumerate(tokens):
             if not _is_content(token):
                 continue
             lemma = _lemma(token)
@@ -73,7 +89,7 @@ def tokenize(text: str) -> list[Word]:
             seen.add(key)
             words.append(
                 Word(
-                    surface=token.surface,
+                    surface=_full_surface(tokens, i),
                     lemma=lemma,
                     reading=reading,
                     pos=token.feature.pos1,

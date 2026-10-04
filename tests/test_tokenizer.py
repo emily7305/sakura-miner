@@ -15,6 +15,14 @@ def test_conjugated_verb_becomes_dictionary_form():
     assert "食べ" not in lemmas(words)
 
 
+def test_surface_keeps_conjugation():
+    words = tokenize("映画を見ました。とても面白かった。")
+    surfaces = {w.lemma: w.surface for w in words}
+    assert surfaces["見る"] == "見ました"
+    assert surfaces["面白い"] == "面白かった"
+    assert surfaces["映画"] == "映画"
+
+
 def test_particles_and_punctuation_dropped():
     words = tokenize("私は猫が好きです。")
     for dropped in ["は", "が", "です", "。"]:
