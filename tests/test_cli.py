@@ -79,6 +79,26 @@ def test_sort_by_frequency(tmp_path):
     assert notes[0].startswith("猫")
 
 
+def test_stats(tmp_path):
+    known = tmp_path / "known.txt"
+    known.write_text("食べる\n", encoding="utf-8")
+    result, out = run(tmp_path, str(SAMPLE), "--stats", known=known)
+    assert result.exit_code == 0, result.output
+    assert not out.exists()
+    lines = result.output.splitlines()
+    assert lines[0].split() == ["level", "words", "%", "new"]
+    assert [line.split()[0] for line in lines[1:]] == [
+        "N5",
+        "N4",
+        "N3",
+        "N2",
+        "N1",
+        "none",
+        "total",
+    ]
+    assert lines[-1].split() == ["total", "10", "9"]
+
+
 def test_missing_file(tmp_path):
     result, _ = run(tmp_path, str(tmp_path / "nope.txt"))
     assert result.exit_code != 0

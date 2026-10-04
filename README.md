@@ -33,7 +33,7 @@ Additional features:
 
 - [x] Subtitle input: read `.srt` and `.ass` files directly
 - [x] Frequency ordering: list the most frequent words first
-- [ ] Statistics: show the JLPT level breakdown of a text with `--stats`
+- [x] Statistics: show the JLPT level breakdown of a text with `--stats`
 - [ ] Reverse cards: optional meaning-to-word cards
 - [ ] Furigana: optional readings above kanji in the source sentence
 
@@ -56,7 +56,7 @@ The `jamdict-data` package contains the complete dictionary database, so the ini
 ## Usage
 
 ```
-sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--sort ORDER] [--deck-name NAME] [--limit N]
+sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--sort ORDER] [--stats] [--deck-name NAME] [--limit N]
 ```
 
 | Option | Description | Default |
@@ -66,6 +66,7 @@ sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--sort ORDER
 | `--known` | File of words to skip (see [Known Words](#known-words)) | `data/known_words.txt` |
 | `--level` | Keep only words at or below this JLPT level (`N5` to `N1`), plus words not on any list | no filter |
 | `--sort` | Card order: `text` (order of first appearance) or `frequency` (most frequent first) | `text` |
+| `--stats` | Show the JLPT level breakdown of the text instead of writing a deck | off |
 | `--deck-name` | Name of the deck in Anki | `Sakura Miner` |
 | `--limit` | Maximum number of cards | no limit |
 
@@ -91,6 +92,27 @@ Files ending in `.srt`, `.ass` or `.ssa` are read as subtitles. Cue numbers, tim
 ```bash
 sakura-miner episode01.ja.srt -o episode01.apkg
 ```
+
+### Text Statistics
+
+`--stats` reports the JLPT level breakdown of a text without writing a deck. This is useful for judging whether an episode or article is at a suitable level before mining it.
+
+```bash
+sakura-miner article.txt --stats
+```
+
+```
+level   words     %    new
+N5          6    60      6
+N4          2    20      2
+N3          0     0      0
+N2          0     0      0
+N1          1    10      1
+none        1    10      1
+total      10           10
+```
+
+`words` counts each distinct word once, `%` is its share of all distinct words, and `new` excludes words in the known-words file. Words that do not appear on any JLPT list are counted under `none`.
 
 ### Card Order
 
