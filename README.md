@@ -14,20 +14,20 @@ Sakura Miner converts Japanese text, such as anime subtitles, song lyrics and ar
 4. Remove words listed in the user's known-words file.
 5. Retrieve meanings and readings from JMdict, offline.
 6. Assign a JLPT level to each word using the bundled vocabulary lists.
-7. Export an Anki deck (`.apkg`) that includes the source sentence on every card.
+7. Export an Anki deck (`.apkg`) that includes the source sentence on every card, with the word highlighted.
 
 The tool is designed primarily for learners at JLPT N3 and below, but it can be used with any Japanese text.
 
 ## Project Status
 
-The project is under active development. Tokenization, dictionary lookup, deck export, known-word filtering and JLPT tagging are complete; sentence highlighting is planned.
+All core features are complete.
 
 - [x] Tokenization: produce a deduplicated list of words in dictionary form
 - [x] Dictionary lookup: retrieve meanings and readings from JMdict
 - [x] Export: write an Anki `.apkg` deck
 - [x] Known words: exclude words the user already knows
 - [x] JLPT tagging: add level tags and a `--level` filter
-- [ ] Sentence context: show the source sentence with the target word highlighted
+- [x] Sentence context: show the source sentence with the target word highlighted
 
 Possible future additions include reverse cards, furigana, frequency-based ordering, subtitle input (`.srt`, `.ass`) and a `--stats` command.
 
@@ -115,6 +115,8 @@ word,reading,level
 ### Cards
 
 Each note has the fields `Word`, `Reading`, `Meaning`, `Sentence` and `Level`. The front of the card shows the word; the back shows the reading, up to three English meanings, the source sentence and the JLPT level, if known. The JLPT level is also added as an Anki tag.
+
+In the source sentence, the word is highlighted exactly as it appeared, including its conjugation: a card for 食べる taken from ケーキを食べた。 highlights 食べた, and a card for 面白い taken from とても面白かった！ highlights 面白かった.
 
 The deck and note type use fixed IDs, and each note's ID is derived from the word and its reading. Importing a new deck built from the same or overlapping text therefore updates existing cards rather than creating duplicates.
 
