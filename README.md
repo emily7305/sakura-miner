@@ -1,5 +1,9 @@
 # Sakura Miner
 
+Pre-made vocabulary decks teach words in isolation, often long before the learner meets them in anything they actually read or watch. Sentence mining takes the opposite approach: words are collected from material the learner already enjoys, so each card is tied to a familiar scene, lyric or line of dialogue, which makes it far easier to remember.
+
+Mining by hand is slow, however, because every word has to be looked up and copied into Anki one at a time. Sakura Miner automates that work, so the learner can spend their time reviewing rather than building cards.
+
 ## Overview
 
 Sakura Miner converts Japanese text, such as anime subtitles, song lyrics and articles, into Anki flashcards in the following stages:
