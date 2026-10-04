@@ -16,35 +16,77 @@ Mining by hand is slow, because every word has to be looked up and copied into A
 
 ## Installation
 
-Python 3.10 or later is required.
+You only need to do this once. No coding experience is needed: you will copy and paste a few commands into a window called the *terminal*.
 
-```bash
-git clone https://github.com/emily7305/sakura-miner.git
-cd sakura-miner
+### Step 1: Install Python
+
+1. Go to [python.org/downloads](https://www.python.org/downloads/) and click the yellow **Download Python** button.
+2. Open the downloaded file and follow the installer.
+   - **Windows:** on the first screen, tick the box **Add python.exe to PATH** before clicking **Install Now**. This is important.
+   - **Mac:** click through the installer with the default settings.
+
+### Step 2: Download Sakura Miner
+
+1. At the top of this page, click the green **Code** button, then **Download ZIP**.
+2. Find the ZIP file in your Downloads folder and unzip it (on Windows, right-click it and choose **Extract All**; on Mac, double-click it).
+3. You now have a folder called `sakura-miner-main`. Move it somewhere easy to find, such as your Desktop.
+
+### Step 3: Open a terminal in the folder
+
+- **Windows:** open the `sakura-miner-main` folder, click the address bar at the top of the window, type `cmd` and press **Enter**. A black window opens.
+- **Mac:** open the **Terminal** app (press **Cmd + Space** and search for "Terminal"). Type `cd ` (with a space after it), drag the `sakura-miner-main` folder into the Terminal window, and press **Enter**.
+
+### Step 4: Install
+
+Copy and paste these lines into the terminal, one at a time, pressing **Enter** after each.
+
+**Windows:**
+
+```bat
 python -m venv .venv
-source .venv/bin/activate      # on Windows: .venv\Scripts\activate
+.venv\Scripts\activate
 pip install -e .
 ```
 
-The first installation downloads a full Japanese dictionary, so it may take a few minutes.
+**Mac:**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+```
+
+The last line downloads a full Japanese dictionary, so it can take a few minutes. When the terminal accepts typing again, the installation is complete.
 
 ## Usage
 
-Run Sakura Miner on a text or subtitle file:
+### Making a deck
 
-```bash
-sakura-miner episode01.srt
-```
+1. Put the file you want to study inside the `sakura-miner-main` folder. This can be a text file (`.txt`) or a subtitle file (`.srt` or `.ass`). To make a text file, paste the Japanese text into Notepad (Windows) or TextEdit (Mac) and save it as a `.txt` file (see [Saving text files](#saving-text-files) below).
+2. Open a terminal in the folder (see Step 3 above) and turn Sakura Miner on with:
+   - **Windows:** `.venv\Scripts\activate`
+   - **Mac:** `source .venv/bin/activate`
+3. Run Sakura Miner with the name of your file. For example, if your file is called `episode01.srt`:
 
-This creates `deck.apkg`, which can be opened in Anki with **File > Import**. Importing a newer deck later updates existing cards instead of creating duplicates.
+   ```bash
+   sakura-miner episode01.srt
+   ```
 
-A more typical example, which keeps words up to N3, puts the most frequent words first, adds furigana and saves the deck under a custom name:
+4. A new file called `deck.apkg` appears in the folder. Double-click it, or open Anki and choose **File > Import**, and your new cards are ready.
+
+Step 2 needs to be repeated each time you open a new terminal window. If you see an error such as `'sakura-miner' is not recognized` or `command not found`, it usually means this step was skipped.
+
+Importing a newer deck later updates the existing cards instead of creating duplicates.
+
+### Adding options
+
+Options are added after the file name to change what goes into the deck. For example, this keeps only words up to N3, puts the most frequent words first, adds furigana and names the file `episode01.apkg`:
 
 ```bash
 sakura-miner episode01.srt -o episode01.apkg --level N3 --sort frequency --furigana
 ```
 
-### Options
+### All options
 
 | Option | Description |
 | --- | --- |
@@ -60,20 +102,31 @@ sakura-miner episode01.srt -o episode01.apkg --level N3 --sort frequency --furig
 
 Run `sakura-miner --help` to see all options.
 
-### Skipping Words You Already Know
+### Skipping words you already know
 
-Create a file called `data/known_words.txt` and list the words you already know, one per line, in dictionary form (食べる, not 食べた). These words will never appear in a deck. Lines starting with `#` are ignored, so you can add notes.
+1. Open the `data` folder inside `sakura-miner-main`.
+2. Create a new text file called `known_words.txt` (see [Saving text files](#saving-text-files) below).
+3. Write the words you already know, one per line, in their dictionary form (食べる, not 食べた). Lines starting with `#` are ignored, so you can use them for notes:
 
-```text
-# week 1
-猫
-食べる
-とても
-```
+   ```text
+   # week 1
+   猫
+   食べる
+   とても
+   ```
 
-An example file is included at [`data/known_words.example.txt`](data/known_words.example.txt). Your own `known_words.txt` is ignored by Git, so it stays private.
+4. Save the file. From now on, these words will never appear in your decks.
 
-### Checking the Difficulty of a Text
+You can add to this file whenever you learn new words.
+
+### Saving text files
+
+Sakura Miner needs plain text files saved in UTF-8, which is a standard way of storing Japanese characters.
+
+- **Windows (Notepad):** choose **File > Save as**, make sure **Encoding** at the bottom is set to **UTF-8**, and type a file name ending in `.txt`.
+- **Mac (TextEdit):** first choose **Format > Make Plain Text**. Then choose **File > Save**, set **Plain Text Encoding** to **Unicode (UTF-8)**, and type a file name ending in `.txt`.
+
+### Checking the difficulty of a text
 
 Use `--stats` to see how many words from each JLPT level a text contains before you mine it:
 
