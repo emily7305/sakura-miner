@@ -76,7 +76,7 @@ def print_stats(words: list[Word], known: set[str]) -> None:
     help="Show readings over the kanji in the card sentence.",
 )
 @click.option("--deck-name", default="Sakura Miner", show_default=True)
-@click.option("--limit", type=click.IntRange(min=1), help="Maximum number of cards.")
+@click.option("--limit", type=click.IntRange(min=1), help="Maximum number of words.")
 def main(
     input_path: Path,
     output: Path,

@@ -20,7 +20,9 @@ The tool is designed primarily for learners at JLPT N3 and below, but it can be 
 
 ## Project Status
 
-All core features are complete.
+All planned features are complete.
+
+Core features:
 
 - [x] Tokenization: produce a deduplicated list of words in dictionary form
 - [x] Dictionary lookup: retrieve meanings and readings from JMdict
@@ -29,7 +31,7 @@ All core features are complete.
 - [x] JLPT tagging: add level tags and a `--level` filter
 - [x] Sentence context: show the source sentence with the target word highlighted
 
-All additional features are also complete:
+Additional features:
 
 - [x] Subtitle input: read `.srt` and `.ass` files directly
 - [x] Frequency ordering: list the most frequent words first
@@ -56,7 +58,7 @@ The `jamdict-data` package contains the complete dictionary database, so the ini
 ## Usage
 
 ```
-sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--sort ORDER] [--stats] [--reverse] [--furigana] [--deck-name NAME] [--limit N]
+sakura-miner INPUT [OPTIONS]
 ```
 
 | Option | Description | Default |
@@ -70,7 +72,8 @@ sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--sort ORDER
 | `--reverse` | Also create a meaning-to-word card for each word | off |
 | `--furigana` | Show readings above the kanji in the source sentence | off |
 | `--deck-name` | Name of the deck in Anki | `Sakura Miner` |
-| `--limit` | Maximum number of cards | no limit |
+| `--help` | Show all options and exit | |
+| `--limit` | Maximum number of words to include | no limit |
 
 Example:
 
