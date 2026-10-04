@@ -13,6 +13,8 @@ dependencies = [
     "fugashi",
     "unidic-lite",
     "jaconv",
+    "jamdict",
+    "jamdict-data",
 ]
 
 [project.optional-dependencies]
