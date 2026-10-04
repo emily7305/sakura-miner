@@ -15,7 +15,12 @@ dependencies = [
     "jaconv",
     "jamdict",
     "jamdict-data",
+    "genanki",
+    "click",
 ]
+
+[project.scripts]
+sakura-miner = "sakura_miner.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest", "ruff", "pre-commit"]
