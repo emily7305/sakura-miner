@@ -1,35 +1,37 @@
 # sakura-miner 🌸
 
-sakura-miner takes Japanese text you actually care about (anime subs, song lyrics, articles) and turns the words you don't know yet into Anki cards, complete with readings, meanings, JLPT level and the original sentence.
+sakura-miner is a command line tool that converts Japanese text, such as anime subtitles, song lyrics and articles, into Anki flashcards. Each card contains the word in its dictionary form, its reading, English meanings, a JLPT level where available, and the sentence in which the word originally appeared.
 
-It's mostly built for N3 and below, but it works on any text.
+The tool is designed primarily for learners at JLPT N3 and below, but it can be used with any Japanese text.
 
-## How it works
+## Overview
 
-1. read a UTF-8 text file
-2. split it into sentences and tokenize with fugashi
-3. reduce every word to its dictionary form (食べた → 食べる)
-4. drop the words you already know
-5. look up meanings and readings offline in JMdict
-6. tag each word with a JLPT level, if you have level lists
-7. export an Anki deck (`.apkg`) with the original sentence on every card
+sakura-miner processes a text in the following stages:
 
-## Status
+1. Read a UTF-8 encoded text file.
+2. Split the text into sentences and tokenize each sentence with fugashi.
+3. Reduce each word to its dictionary form (for example, 食べた becomes 食べる).
+4. Remove words listed in the user's known-words file.
+5. Retrieve meanings and readings from JMdict, offline.
+6. Assign a JLPT level to each word, if level lists are provided.
+7. Export an Anki deck (`.apkg`) that includes the source sentence on every card.
 
-Still early. Tokenizing and dictionary lookup work, the rest is on the way.
+## Project Status
 
-- [x] Tokenize: text in, deduplicated dictionary-form words out
-- [x] Lookup: meanings and readings from JMdict
-- [ ] Export: write an `.apkg` deck
-- [ ] Known words: skip words you already know
-- [ ] JLPT tagging: level tags and `--level` filter
-- [ ] Sentence context: original sentence with the word highlighted
+The project is under active development. Tokenization and dictionary lookup are complete; the remaining stages are planned.
 
-Maybe later: reverse cards, furigana, frequency sorting, `.srt` / `.ass` input, a `--stats` command.
+- [x] Tokenization: produce a deduplicated list of words in dictionary form
+- [x] Dictionary lookup: retrieve meanings and readings from JMdict
+- [ ] Export: write an Anki `.apkg` deck
+- [ ] Known words: exclude words the user already knows
+- [ ] JLPT tagging: add level tags and a `--level` filter
+- [ ] Sentence context: show the source sentence with the target word highlighted
 
-## Install
+Possible future additions include reverse cards, furigana, frequency-based ordering, subtitle input (`.srt`, `.ass`) and a `--stats` command.
 
-Needs Python 3.10+.
+## Installation
+
+Python 3.10 or later is required.
 
 ```bash
 git clone https://github.com/emily7305/sakura-miner.git
@@ -39,13 +41,13 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 ```
 
-Use a venv. On some Linux distros `unidic-lite` won't build against the system setuptools.
+Installing into a virtual environment is recommended. On some Linux distributions, `unidic-lite` fails to build against the system version of setuptools.
 
-`jamdict-data` ships the whole dictionary, so the first install is a fairly big download. After that everything runs offline.
+The `jamdict-data` package contains the complete dictionary database, so the initial installation is a large download. After installation, all processing runs offline.
 
 ## Usage
 
-There's no command line yet, but you can already use it from Python:
+The command line interface is not yet available. The library can already be used from Python:
 
 ```python
 from sakura_miner.lookup import lookup
@@ -56,6 +58,8 @@ for word in tokenize("昨日、友達とケーキを食べた。"):
     print(word.lemma, word.reading, entry.meanings)
 ```
 
+Output:
+
 ```
 昨日 きのう ['yesterday']
 友達 ともだち ['friend', 'companion']
@@ -63,24 +67,24 @@ for word in tokenize("昨日、友達とケーキを食べた。"):
 食べる たべる ['to eat']
 ```
 
-The planned CLI looks like this:
+The planned command line interface is as follows:
 
 ```
 sakura-miner INPUT -o OUTPUT.apkg [--known PATH] [--level N3] [--deck-name NAME] [--limit N]
 ```
 
-## What gets kept
+## Word Selection
 
-Only content words: nouns, verbs, i-adjectives, na-adjectives and adverbs. Particles, auxiliaries (です, ます), punctuation, symbols and numbers are skipped.
+Only content words are retained: nouns, verbs, i-adjectives, na-adjectives and adverbs. Particles, auxiliary verbs (such as です and ます), punctuation, symbols and numerals are excluded.
 
-Readings are stored in hiragana, except for katakana words like テレビ, which keep their katakana so they match the dictionary.
+Readings are stored in hiragana. Words written in katakana, such as テレビ, retain their katakana reading so that they match the corresponding dictionary entry.
 
-A word only shows up once per deck, together with the first sentence it appeared in.
+Each word appears only once per deck and is paired with the first sentence in which it occurs.
 
-### Known quirks
+### Known Limitations
 
-- unidic splits some compounds into shorter units, so 喫茶店 comes out as 喫茶 and the 店 is dropped
-- the reading is unidic's dictionary reading, so 明日 is あす, not あした
+- UniDic segments some compound words into shorter units. For example, 喫茶店 is returned as 喫茶, and 店 is discarded.
+- Readings follow the UniDic dictionary form, so 明日 is read as あす rather than あした.
 
 ## Development
 
@@ -88,17 +92,17 @@ A word only shows up once per deck, together with the first sentence it appeared
 pytest
 ruff check .
 ruff format .
-pre-commit install   # runs ruff on every commit
+pre-commit install   # runs ruff before each commit
 ```
 
-Tests use small fixtures in `tests/fixtures/` and don't need network access.
+The test suite uses small fixtures in `tests/fixtures/` and does not require network access.
 
-## Credits
+## Acknowledgements
 
-- Dictionary data comes from [JMdict and KANJIDIC2](https://www.edrdg.org/) by the Electronic Dictionary Research and Development Group, used under the [CC BY-SA 4.0](https://www.edrdg.org/edrdg/licence.html) licence, through [jamdict](https://github.com/neocl/jamdict)
-- Tokenizing by [fugashi](https://github.com/polm/fugashi) with [unidic-lite](https://github.com/polm/unidic-lite)
-- Kana conversion by [jaconv](https://github.com/ikegami-yukino/jaconv)
+- Dictionary data is taken from [JMdict and KANJIDIC2](https://www.edrdg.org/), compiled by the Electronic Dictionary Research and Development Group, and is used under the [CC BY-SA 4.0](https://www.edrdg.org/edrdg/licence.html) licence via [jamdict](https://github.com/neocl/jamdict).
+- Tokenization is provided by [fugashi](https://github.com/polm/fugashi) with [unidic-lite](https://github.com/polm/unidic-lite).
+- Kana conversion is provided by [jaconv](https://github.com/ikegami-yukino/jaconv).
 
 ## Licence
 
-MIT, see [LICENSE](LICENSE). The dictionary data keeps its own licence (see above).
+This project is released under the MIT Licence; see [LICENSE](LICENSE). The dictionary data remains subject to its own licence, as noted above.
