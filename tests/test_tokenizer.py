@@ -1,6 +1,11 @@
 from pathlib import Path
 
-from sakura_miner.tokenizer import split_sentences, tokenize
+from sakura_miner.tokenizer import (
+    by_frequency,
+    count_words,
+    split_sentences,
+    tokenize,
+)
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -73,3 +78,19 @@ def test_sample_file():
     words = tokenize(text)
     assert "食べる" in lemmas(words)
     assert all(w.sentence for w in words)
+
+
+def test_count_words():
+    counts = count_words("猫が好き。猫を見た。犬を見る。")
+    assert counts[("猫", "ねこ")] == 2
+    assert counts[("見る", "みる")] == 2
+    assert counts[("犬", "いぬ")] == 1
+
+
+def test_by_frequency():
+    text = "犬を見た。猫がいる。猫が好き。"
+    words = by_frequency(tokenize(text), count_words(text))
+    assert words[0].lemma == "猫"
+    # ties stay in text order
+    rest = [w.lemma for w in words[1:]]
+    assert rest == [w.lemma for w in tokenize(text) if w.lemma != "猫"]

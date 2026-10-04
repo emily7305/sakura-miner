@@ -1,4 +1,6 @@
 import re
+from collections import Counter
+from collections.abc import Iterator
 
 import fugashi
 import jaconv
@@ -68,32 +70,44 @@ def _full_surface(tokens, i: int) -> str:
     return surface
 
 
-def tokenize(text: str) -> list[Word]:
-    """Return content words from text, deduplicated on (lemma, reading).
-
-    The first sentence a word shows up in is kept.
-    """
+def iter_words(text: str) -> Iterator[Word]:
+    """Yield every content word in text, repeats included."""
     tagger = get_tagger()
-    seen: set[tuple[str, str]] = set()
-    words: list[Word] = []
     for sentence in split_sentences(text):
         tokens = list(tagger(sentence))
         for i, token in enumerate(tokens):
             if not _is_content(token):
                 continue
             lemma = _lemma(token)
-            reading = _reading(token, lemma)
-            key = (lemma, reading)
-            if key in seen:
-                continue
-            seen.add(key)
-            words.append(
-                Word(
-                    surface=_full_surface(tokens, i),
-                    lemma=lemma,
-                    reading=reading,
-                    pos=token.feature.pos1,
-                    sentence=sentence,
-                )
+            yield Word(
+                surface=_full_surface(tokens, i),
+                lemma=lemma,
+                reading=_reading(token, lemma),
+                pos=token.feature.pos1,
+                sentence=sentence,
             )
+
+
+def tokenize(text: str) -> list[Word]:
+    """Return content words from text, deduplicated on (lemma, reading).
+
+    The first sentence a word shows up in is kept.
+    """
+    seen: set[tuple[str, str]] = set()
+    words: list[Word] = []
+    for word in iter_words(text):
+        key = (word.lemma, word.reading)
+        if key not in seen:
+            seen.add(key)
+            words.append(word)
     return words
+
+
+def count_words(text: str) -> Counter[tuple[str, str]]:
+    """Count how often each (lemma, reading) appears in text."""
+    return Counter((w.lemma, w.reading) for w in iter_words(text))
+
+
+def by_frequency(words: list[Word], counts: Counter[tuple[str, str]]) -> list[Word]:
+    """Sort words most frequent first. Ties keep their original order."""
+    return sorted(words, key=lambda w: -counts[(w.lemma, w.reading)])
