@@ -1,12 +1,8 @@
-# sakura-miner 🌸
-
-sakura-miner is a command line tool that converts Japanese text, such as anime subtitles, song lyrics and articles, into Anki flashcards. Each card contains the word in its dictionary form, its reading, English meanings, a JLPT level where available, and the sentence in which the word originally appeared.
-
-The tool is designed primarily for learners at JLPT N3 and below, but it can be used with any Japanese text.
+# Sakura Miner
 
 ## Overview
 
-sakura-miner processes a text in the following stages:
+Sakura Miner converts Japanese text, such as anime subtitles, song lyrics and articles, into Anki flashcards in the following stages:
 
 1. Read a UTF-8 encoded text file.
 2. Split the text into sentences and tokenize each sentence with fugashi.
@@ -15,6 +11,8 @@ sakura-miner processes a text in the following stages:
 5. Retrieve meanings and readings from JMdict, offline.
 6. Assign a JLPT level to each word, if level lists are provided.
 7. Export an Anki deck (`.apkg`) that includes the source sentence on every card.
+
+The tool is designed primarily for learners at JLPT N3 and below, but it can be used with any Japanese text.
 
 ## Project Status
 
@@ -55,7 +53,7 @@ sakura-miner INPUT [-o OUTPUT.apkg] [--deck-name NAME] [--limit N]
 | --- | --- | --- |
 | `INPUT` | Path to a UTF-8 text file | required |
 | `-o`, `--output` | Path of the deck to write | `deck.apkg` |
-| `--deck-name` | Name of the deck in Anki | `sakura-miner` |
+| `--deck-name` | Name of the deck in Anki | `Sakura Miner` |
 | `--limit` | Maximum number of cards | no limit |
 
 Example:
