@@ -28,7 +28,7 @@ Mining by hand is slow, because every word has to be looked up and copied into A
 ### Your input
 
 - **The text must be actual text, not an image.** Sakura Miner cannot read scanned pages, screenshots, PDFs, or subtitles that are burned into a video. For anime and dramas, you need a separate subtitle file (`.srt` or `.ass`).
-- **The file must be in Japanese.** Lines in other languages are simply skipped.
+- **The file should be in Japanese.** Words written in the Latin alphabet, such as English, are skipped automatically. Text in other languages that use kanji, such as Chinese, is not detected and may produce incorrect cards.
 
 ### Good to know
 
