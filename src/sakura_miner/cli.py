@@ -51,6 +51,7 @@ def print_stats(words: list[Word], known: set[str]) -> None:
 @click.option(
     "--level",
     type=click.Choice(LEVELS, case_sensitive=False),
+    metavar="[N5|N4|N3|N2|N1]",
     help="Only keep words at or below this JLPT level, plus unlisted words.",
 )
 @click.option(
