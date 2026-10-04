@@ -37,6 +37,20 @@ def test_known_words_skipped(tmp_path):
     assert "skipped as known: 2" in result.output
 
 
+def test_level_filter(tmp_path):
+    text = tmp_path / "in.txt"
+    # 食べる is N5, ケーキ is N4, 賛成 is N3
+    text.write_text("ケーキを食べた。賛成です。", encoding="utf-8")
+    result, _ = run(tmp_path, str(text), "--level", "n4")
+    assert result.exit_code == 0, result.output
+    assert "skipped above N4: 1" in result.output
+
+
+def test_bad_level(tmp_path):
+    result, _ = run(tmp_path, str(SAMPLE), "--level", "N6")
+    assert result.exit_code != 0
+
+
 def test_missing_file(tmp_path):
     result, _ = run(tmp_path, str(tmp_path / "nope.txt"))
     assert result.exit_code != 0
