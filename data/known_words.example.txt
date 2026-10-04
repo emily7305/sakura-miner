@@ -1,0 +1,10 @@
+# Words you already know, one per line, in dictionary form.
+# Copy this file to data/known_words.txt and add your own.
+# Lines starting with # are ignored.
+
+猫
+食べる
+とても
+
+# To skip only one reading of a word, add the reading after a tab:
+上手	じょうず

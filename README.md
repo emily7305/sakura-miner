@@ -20,12 +20,12 @@ The tool is designed primarily for learners at JLPT N3 and below, but it can be 
 
 ## Project Status
 
-The project is under active development. Tokenization, dictionary lookup and deck export are complete; the remaining stages are planned.
+The project is under active development. Tokenization, dictionary lookup, deck export and known-word filtering are complete; the remaining stages are planned.
 
 - [x] Tokenization: produce a deduplicated list of words in dictionary form
 - [x] Dictionary lookup: retrieve meanings and readings from JMdict
 - [x] Export: write an Anki `.apkg` deck
-- [ ] Known words: exclude words the user already knows
+- [x] Known words: exclude words the user already knows
 - [ ] JLPT tagging: add level tags and a `--level` filter
 - [ ] Sentence context: show the source sentence with the target word highlighted
 
@@ -50,13 +50,14 @@ The `jamdict-data` package contains the complete dictionary database, so the ini
 ## Usage
 
 ```
-sakura-miner INPUT [-o OUTPUT.apkg] [--deck-name NAME] [--limit N]
+sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--deck-name NAME] [--limit N]
 ```
 
 | Option | Description | Default |
 | --- | --- | --- |
 | `INPUT` | Path to a UTF-8 text file | required |
 | `-o`, `--output` | Path of the deck to write | `deck.apkg` |
+| `--known` | File of words to skip (see [Known Words](#known-words)) | `data/known_words.txt` |
 | `--deck-name` | Name of the deck in Anki | `Sakura Miner` |
 | `--limit` | Maximum number of cards | no limit |
 
@@ -68,10 +69,28 @@ sakura-miner episode01.txt -o episode01.apkg --deck-name "Episode 1"
 
 ```
 words found: 10
-cards written: 10 -> episode01.apkg
+skipped as known: 2
+cards written: 8 -> episode01.apkg
 ```
 
-The resulting file can be imported into Anki with **File > Import**. Options for known words (`--known`) and JLPT filtering (`--level`) will be added in later milestones.
+The resulting file can be imported into Anki with **File > Import**. JLPT filtering (`--level`) will be added in a later milestone.
+
+### Known Words
+
+Words that are already familiar can be listed in a known-words file so that they never appear in a deck. By default, Sakura Miner reads `data/known_words.txt` if it exists; another file can be given with `--known`. If the file does not exist, no words are skipped.
+
+The file uses the following format:
+
+- UTF-8 text, one word per line, written in dictionary form (食べる, not 食べた)
+- lines beginning with `#` are comments, and text after `#` on a line is ignored
+- blank lines are ignored
+- to skip only one reading of a word, add the reading in hiragana after a tab, for example `上手<TAB>じょうず`
+
+A template is provided in [`data/known_words.example.txt`](data/known_words.example.txt). To use it, copy it to `data/known_words.txt`, which is excluded from version control so that a personal word list is never committed.
+
+```bash
+cp data/known_words.example.txt data/known_words.txt
+```
 
 ### Cards
 
