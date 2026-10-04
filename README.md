@@ -229,7 +229,7 @@ The test suite uses small fixtures in `tests/fixtures/` and does not require net
 - Dictionary data is taken from [JMdict and KANJIDIC2](https://www.edrdg.org/), compiled by the Electronic Dictionary Research and Development Group, and is used under the [CC BY-SA 4.0](https://www.edrdg.org/edrdg/licence.html) licence via [jamdict](https://github.com/neocl/jamdict).
 - Tokenization is provided by [fugashi](https://github.com/polm/fugashi) with [unidic-lite](https://github.com/polm/unidic-lite).
 - Kana conversion is provided by [jaconv](https://github.com/ikegami-yukino/jaconv).
-- Anki decks are generated with [genanki](https://github.com/kerrickstaley/genanki).
+- Anki decks are built with [genanki](https://github.com/kerrickstaley/genanki).
 - The command line interface is built with [click](https://click.palletsprojects.com/).
 
 ## Licence

@@ -57,7 +57,7 @@ BACK = """{{FrontSide}}
 {{#Level}}<div class="level">{{Level}}</div>{{/Level}}
 """
 
-# only generated when the Reverse field is filled in
+# only created when the Reverse field is filled in
 REVERSE_FRONT = '{{#Reverse}}<div class="meaning">{{Meaning}}</div>{{/Reverse}}'
 
 REVERSE_BACK = """{{FrontSide}}
