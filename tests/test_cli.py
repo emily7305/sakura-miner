@@ -99,6 +99,13 @@ def test_stats(tmp_path):
     assert lines[-1].split() == ["total", "10", "9"]
 
 
+def test_reverse(tmp_path):
+    result, out = run(tmp_path, str(SAMPLE), "--reverse", "--limit", "2")
+    assert result.exit_code == 0, result.output
+    assert read_fields(out, tmp_path)[0].endswith("\x1fy")
+    assert "cards written: 4" in result.output
+
+
 def test_missing_file(tmp_path):
     result, _ = run(tmp_path, str(tmp_path / "nope.txt"))
     assert result.exit_code != 0

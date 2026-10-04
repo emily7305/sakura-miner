@@ -34,7 +34,7 @@ Additional features:
 - [x] Subtitle input: read `.srt` and `.ass` files directly
 - [x] Frequency ordering: list the most frequent words first
 - [x] Statistics: show the JLPT level breakdown of a text with `--stats`
-- [ ] Reverse cards: optional meaning-to-word cards
+- [x] Reverse cards: optional meaning-to-word cards
 - [ ] Furigana: optional readings above kanji in the source sentence
 
 ## Installation
@@ -56,7 +56,7 @@ The `jamdict-data` package contains the complete dictionary database, so the ini
 ## Usage
 
 ```
-sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--sort ORDER] [--stats] [--deck-name NAME] [--limit N]
+sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--sort ORDER] [--stats] [--reverse] [--deck-name NAME] [--limit N]
 ```
 
 | Option | Description | Default |
@@ -67,6 +67,7 @@ sakura-miner INPUT [-o OUTPUT.apkg] [--known PATH] [--level LEVEL] [--sort ORDER
 | `--level` | Keep only words at or below this JLPT level (`N5` to `N1`), plus words not on any list | no filter |
 | `--sort` | Card order: `text` (order of first appearance) or `frequency` (most frequent first) | `text` |
 | `--stats` | Show the JLPT level breakdown of the text instead of writing a deck | off |
+| `--reverse` | Also create a meaning-to-word card for each word | off |
 | `--deck-name` | Name of the deck in Anki | `Sakura Miner` |
 | `--limit` | Maximum number of cards | no limit |
 
@@ -161,7 +162,9 @@ word,reading,level
 
 ### Cards
 
-Each note has the fields `Word`, `Reading`, `Meaning`, `Sentence` and `Level`. The front of the card shows the word; the back shows the reading, up to three English meanings, the source sentence and the JLPT level, if known. The JLPT level is also added as an Anki tag.
+Each note has the fields `Word`, `Reading`, `Meaning`, `Sentence`, `Level` and `Reverse`. The front of the card shows the word; the back shows the reading, up to three English meanings, the source sentence and the JLPT level, if known. The JLPT level is also added as an Anki tag.
+
+With `--reverse`, each note also produces a second card that shows the English meaning on the front and asks for the Japanese word; the back shows the word, its reading and the source sentence. The reverse card is controlled by the `Reverse` field, so it can also be enabled or disabled for individual notes in Anki by filling in or clearing that field.
 
 In the source sentence, the word is highlighted exactly as it appeared, including its conjugation: a card for 食べる taken from ケーキを食べた。 highlights 食べた, and a card for 面白い taken from とても面白かった！ highlights 面白かった.
 
