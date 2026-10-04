@@ -14,6 +14,30 @@ Mining by hand is slow, because every word has to be looked up and copied into A
 - Optional furigana, reverse cards and frequency ordering
 - Runs entirely offline once installed
 
+## Before you start
+
+### What you need
+
+- **A Windows or Mac computer.** Sakura Miner runs on a computer, not on a phone. Once a deck is in Anki, it can be synced to your phone through AnkiWeb as usual.
+- **Anki**, the free flashcard app, from [apps.ankiweb.net](https://apps.ankiweb.net/).
+- **About 700 MB of free disk space**, mostly for the offline dictionary.
+- **An internet connection for installation only.** After that, everything runs offline.
+- **The ability to read hiragana and katakana.** Readings are shown in kana only, with no romaji.
+- **Basic English**, as all meanings are given in English.
+
+### Your input
+
+- **The text must be actual text, not an image.** Sakura Miner cannot read scanned pages, screenshots, PDFs, or subtitles that are burned into a video. For anime and dramas, you need a separate subtitle file (`.srt` or `.ass`).
+- **The file must be in Japanese.** Lines in other languages are simply skipped.
+
+### Good to know
+
+- **Cards are made automatically and may contain mistakes.** Each card shows the most common meaning of a word, which may not be the meaning used in your sentence. It is worth checking new cards briefly before studying them.
+- **Only individual words are collected**, not grammar patterns or set phrases. Particles such as は and を are skipped.
+- **Names of people and places may appear as cards**, for example 田中 or 東京. You can delete these in Anki or add them to your known-words file.
+- **JLPT levels are a guide only**, as explained in [Limitations](#limitations).
+- **Decks are for personal study.** Subtitles, lyrics and articles are usually copyrighted, so decks containing their sentences should not be shared publicly.
+
 ## Installation
 
 You only need to do this once. No coding experience is needed: you will copy and paste a few commands into a window called the *terminal*.
