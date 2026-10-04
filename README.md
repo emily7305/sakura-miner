@@ -18,11 +18,11 @@ sakura-miner processes a text in the following stages:
 
 ## Project Status
 
-The project is under active development. Tokenization and dictionary lookup are complete; the remaining stages are planned.
+The project is under active development. Tokenization, dictionary lookup and deck export are complete; the remaining stages are planned.
 
 - [x] Tokenization: produce a deduplicated list of words in dictionary form
 - [x] Dictionary lookup: retrieve meanings and readings from JMdict
-- [ ] Export: write an Anki `.apkg` deck
+- [x] Export: write an Anki `.apkg` deck
 - [ ] Known words: exclude words the user already knows
 - [ ] JLPT tagging: add level tags and a `--level` filter
 - [ ] Sentence context: show the source sentence with the target word highlighted
@@ -47,7 +47,39 @@ The `jamdict-data` package contains the complete dictionary database, so the ini
 
 ## Usage
 
-The command line interface is not yet available. The library can already be used from Python:
+```
+sakura-miner INPUT [-o OUTPUT.apkg] [--deck-name NAME] [--limit N]
+```
+
+| Option | Description | Default |
+| --- | --- | --- |
+| `INPUT` | Path to a UTF-8 text file | required |
+| `-o`, `--output` | Path of the deck to write | `deck.apkg` |
+| `--deck-name` | Name of the deck in Anki | `sakura-miner` |
+| `--limit` | Maximum number of cards | no limit |
+
+Example:
+
+```bash
+sakura-miner episode01.txt -o episode01.apkg --deck-name "Episode 1"
+```
+
+```
+words found: 10
+cards written: 10 -> episode01.apkg
+```
+
+The resulting file can be imported into Anki with **File > Import**. Options for known words (`--known`) and JLPT filtering (`--level`) will be added in later milestones.
+
+### Cards
+
+Each note has the fields `Word`, `Reading`, `Meaning`, `Sentence` and `Level`. The front of the card shows the word; the back shows the reading, up to three English meanings, the source sentence and the JLPT level, if known. The JLPT level is also added as an Anki tag.
+
+The deck and note type use fixed IDs, and each note's ID is derived from the word and its reading. Importing a new deck built from the same or overlapping text therefore updates existing cards rather than creating duplicates.
+
+### Library Use
+
+The individual stages can also be used from Python:
 
 ```python
 from sakura_miner.lookup import lookup
@@ -65,12 +97,6 @@ Output:
 友達 ともだち ['friend', 'companion']
 ケーキ ケーキ ['cake']
 食べる たべる ['to eat']
-```
-
-The planned command line interface is as follows:
-
-```
-sakura-miner INPUT -o OUTPUT.apkg [--known PATH] [--level N3] [--deck-name NAME] [--limit N]
 ```
 
 ## Word Selection
@@ -102,6 +128,8 @@ The test suite uses small fixtures in `tests/fixtures/` and does not require net
 - Dictionary data is taken from [JMdict and KANJIDIC2](https://www.edrdg.org/), compiled by the Electronic Dictionary Research and Development Group, and is used under the [CC BY-SA 4.0](https://www.edrdg.org/edrdg/licence.html) licence via [jamdict](https://github.com/neocl/jamdict).
 - Tokenization is provided by [fugashi](https://github.com/polm/fugashi) with [unidic-lite](https://github.com/polm/unidic-lite).
 - Kana conversion is provided by [jaconv](https://github.com/ikegami-yukino/jaconv).
+- Anki decks are generated with [genanki](https://github.com/kerrickstaley/genanki).
+- The command line interface is built with [click](https://click.palletsprojects.com/).
 
 ## Licence
 
