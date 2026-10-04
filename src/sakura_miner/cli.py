@@ -17,7 +17,7 @@ from sakura_miner.tokenizer import tokenize
     show_default=True,
     help="Where to write the deck.",
 )
-@click.option("--deck-name", default="sakura-miner", show_default=True)
+@click.option("--deck-name", default="Sakura Miner", show_default=True)
 @click.option("--limit", type=click.IntRange(min=1), help="Maximum number of cards.")
 def main(input_path: Path, output: Path, deck_name: str, limit: int | None) -> None:
     """Turn a Japanese text file into an Anki deck."""

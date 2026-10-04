@@ -49,7 +49,7 @@ BACK = """{{FrontSide}}
 
 MODEL = genanki.Model(
     MODEL_ID,
-    "sakura-miner",
+    "Sakura Miner",
     fields=[
         {"name": "Word"},
         {"name": "Reading"},
@@ -79,7 +79,7 @@ def make_note(entry: Entry) -> genanki.Note:
     return genanki.Note(model=MODEL, fields=fields, tags=tags, guid=note_guid(entry))
 
 
-def build_deck(entries: list[Entry], deck_name: str = "sakura-miner") -> genanki.Deck:
+def build_deck(entries: list[Entry], deck_name: str = "Sakura Miner") -> genanki.Deck:
     deck = genanki.Deck(DECK_ID, deck_name)
     for entry in entries:
         deck.add_note(make_note(entry))
@@ -87,7 +87,7 @@ def build_deck(entries: list[Entry], deck_name: str = "sakura-miner") -> genanki
 
 
 def write_deck(
-    entries: list[Entry], path: Path, deck_name: str = "sakura-miner"
+    entries: list[Entry], path: Path, deck_name: str = "Sakura Miner"
 ) -> None:
     """Write entries to an Anki .apkg file at path."""
     genanki.Package(build_deck(entries, deck_name)).write_to_file(str(path))
